@@ -1,13 +1,11 @@
 from rest_framework import serializers
 
-from .models import DailyStats
+from .models import InfectionStats
 
 
-class DailyStatsSerializer(serializers.ModelSerializer):
+class InfectionStatsSerializer(serializers.ModelSerializer):
     prefecture = serializers.StringRelatedField(many=False)
 
     class Meta:
-        model = DailyStats
-        #fields = ['prefecture', 'patients', 'deaths']
+        model = InfectionStats
         fields = '__all__'
-
