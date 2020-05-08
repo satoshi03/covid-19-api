@@ -10,7 +10,7 @@ class PrefectureAdmin(admin.ModelAdmin):
 
 @admin.register(InfectionStats)
 class InfectionStatsAdmin(admin.ModelAdmin):
-    list_display = ('prefecture', 'patients', 'deaths', 'reported_date')
+    list_display = ('prefecture', 'infected', 'recovered', 'death', 'reported_date')
 
 
 @admin.register(BehaviorStats)
