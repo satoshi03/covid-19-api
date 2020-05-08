@@ -34,8 +34,9 @@ class InfectionStats(BaseStats):
     class Meta:
         verbose_name = verbose_name_plural = _('感染統計')
 
-    patients = models.PositiveIntegerField(_('感染者数'), default=0)
-    deaths = models.PositiveIntegerField(_('死者数'), default=0)
+    infected = models.PositiveIntegerField(_('感染者数'), default=0)
+    recovered = models.PositiveIntegerField(_('回復者数'), default=0)
+    death = models.PositiveIntegerField(_('死者数'), default=0)
 
     @classmethod
     def aggregate_by_date(cls, date):
