@@ -47,3 +47,6 @@ class BehaviorStats(models.Model):
     @classmethod
     def aggregate_by_date(cls, date):
         return cls.objects.filter(reported_date=date).aggregate(Sum('reported_date'))
+
+    def __str__(self):
+        return "{}:{}".format(self.reported_date, self.prefecture.name)
