@@ -26,8 +26,7 @@ class BaseStatsViewSet(viewsets.ViewSet):
             pref_qs = pref_qs.filter(name=prefecture)
 
         # fetch stats
-        qs = pref_qs.prefetch_related(Prefetch("basestats_set", queryset=qs.order_by('reported_date')))
-        return [{'name': q.name, 'daily': q.basestats_set.all()} for q in qs]
+        return pref_qs.prefetch_related(Prefetch("basestats_set", queryset=qs.order_by('reported_date')))
 
 
 class InfectionStatsViewSet(BaseStatsViewSet):
@@ -35,7 +34,20 @@ class InfectionStatsViewSet(BaseStatsViewSet):
 
     def list(self, request):
         queryset = self.get_queryset()
-        serializer = InfectionStatsSerializer(queryset, many=True)
+        data = []
+        for q in queryset:
+            total = q.basestats_set.all().aggregate(
+                total_infected=Sum('infected'),
+                total_recovered=Sum('recovered'),
+                total_death=Sum('death'),
+            )
+            dic = {
+                'name': q.name,
+                'daily': q.basestats_set.all()
+            }
+            dic.update(total)
+            data.append(dic)
+        serializer = InfectionStatsSerializer(data, many=True)
         return Response(serializer.data)
 
 
@@ -44,5 +56,16 @@ class BehaviorStatsViewSet(BaseStatsViewSet):
 
     def list(self, request):
         queryset = self.get_queryset()
-        serializer = BehaviorStatsSerializer(queryset, many=True)
+        data = []
+        for q in queryset:
+            avg = q.basestats_set.all().aggregate(
+                average_restraint_ratio=Avg('restraint_ratio'),
+            )
+            dic = {
+                'name': q.name,
+                'daily': q.basestats_set.all()
+            }
+            dic.update(avg)
+            data.append(dic)
+        serializer = BehaviorStatsSerializer(data, many=True)
         return Response(serializer.data)

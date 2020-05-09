@@ -11,10 +11,13 @@ class InfectionDailyStatsSerializer(serializers.ModelSerializer):
 
 class InfectionStatsSerializer(serializers.ModelSerializer):
     daily = InfectionDailyStatsSerializer(many=True, read_only=True)
+    total_infected = serializers.IntegerField()
+    total_recovered = serializers.IntegerField()
+    total_death = serializers.IntegerField()
 
     class Meta:
         model = Prefecture
-        fields = ['name', 'daily']
+        fields = ['name', 'total_infected', 'total_recovered', 'total_death', 'daily']
 
 
 class BehaviorDailyStatsSerializer(serializers.ModelSerializer):
@@ -25,7 +28,8 @@ class BehaviorDailyStatsSerializer(serializers.ModelSerializer):
 
 class BehaviorStatsSerializer(serializers.ModelSerializer):
     daily = BehaviorDailyStatsSerializer(many=True, read_only=True)
+    average_restraint_ratio = serializers.FloatField()
 
     class Meta:
         model = Prefecture
-        fields = ['name', 'daily']
+        fields = ['name', 'average_restraint_ratio', 'daily']
