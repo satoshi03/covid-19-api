@@ -6,7 +6,7 @@ from .models import Prefecture, InfectionStats, BehaviorStats
 class InfectionDailyStatsSerializer(serializers.ModelSerializer):
     class Meta:
         model = InfectionStats
-        fields = ['id', 'infected', 'recovered', 'reported_date']
+        fields = ['id', 'infected', 'recovered', 'death', 'reported_date']
 
 
 class InfectionStatsSerializer(serializers.ModelSerializer):
