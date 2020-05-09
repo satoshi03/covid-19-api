@@ -1,19 +1,31 @@
 from rest_framework import serializers
 
-from .models import InfectionStats, BehaviorStats
+from .models import Prefecture, InfectionStats, BehaviorStats
+
+
+class InfectionDailyStatsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = InfectionStats
+        fields = ['id', 'infected', 'recovered', 'reported_date']
 
 
 class InfectionStatsSerializer(serializers.ModelSerializer):
-    prefecture = serializers.StringRelatedField(many=False)
+    daily = InfectionDailyStatsSerializer(many=True, read_only=True)
 
     class Meta:
-        model = InfectionStats
-        fields = '__all__'
+        model = Prefecture
+        fields = ['name', 'daily']
+
+
+class BehaviorDailyStatsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = BehaviorStats
+        fields = ['id', 'restraint_ratio', 'reported_date']
 
 
 class BehaviorStatsSerializer(serializers.ModelSerializer):
-    prefecture = serializers.StringRelatedField(many=False)
+    daily = BehaviorDailyStatsSerializer(many=True, read_only=True)
 
     class Meta:
-        model = BehaviorStats
-        fields = '__all__'
+        model = Prefecture
+        fields = ['name', 'daily']
