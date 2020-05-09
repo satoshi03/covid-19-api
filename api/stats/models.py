@@ -15,40 +15,34 @@ class Prefecture(models.Model):
         return self.name
 
 
-class BaseStats(models.Model):
+class InfectionStats(models.Model):
     class Meta:
+        verbose_name = verbose_name_plural = _('感染統計')
         unique_together = (('prefecture', 'reported_date'))
 
     prefecture = models.ForeignKey(Prefecture, on_delete=models.PROTECT)
-    reported_date = models.DateField(_('報告日付'), db_index=True)
-
-    @classmethod
-    def filter_by_date(cls, start_date, end_date):
-        return cls.objects.filter(reported_date__range(start_date, end_date))
-
-    def __str__(self):
-        return "{}:{}".format(self.reported_date, self.prefecture.name)
-
-
-class InfectionStats(BaseStats):
-    class Meta:
-        verbose_name = verbose_name_plural = _('感染統計')
-
     infected = models.PositiveIntegerField(_('感染者数'), default=0)
     recovered = models.PositiveIntegerField(_('回復者数'), default=0)
     death = models.PositiveIntegerField(_('死者数'), default=0)
+    reported_date = models.DateField(_('報告日付'), db_index=True)
 
     @classmethod
     def aggregate_by_date(cls, date):
         return cls.objects.filter(reported_date=date).aggregate(Sum('patients'), Sum('deaths'))
 
+    def __str__(self):
+        return "{}:{}".format(self.reported_date, self.prefecture.name)
 
-class BehaviorStats(BaseStats):
+
+class BehaviorStats(models.Model):
     class Meta:
         verbose_name = verbose_name_plural = _('行動統計')
+        unique_together = (('prefecture', 'reported_date'))
 
+    prefecture = models.ForeignKey(Prefecture, on_delete=models.PROTECT)
     restraint_ratio = models.FloatField(_('自粛率'),
                                         validators=[MinValueValidator(0.0), MaxValueValidator(1.0)])
+    reported_date = models.DateField(_('報告日付'), db_index=True)
 
     @classmethod
     def aggregate_by_date(cls, date):

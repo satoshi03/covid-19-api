@@ -25,25 +25,30 @@ class BaseStatsViewSet(viewsets.ViewSet):
         if prefecture:
             pref_qs = pref_qs.filter(name=prefecture)
 
+        return (qs, pref_qs)
+
         # fetch stats
-        return pref_qs.prefetch_related(Prefetch("basestats_set", queryset=qs.order_by('reported_date')))
 
 
 class InfectionStatsViewSet(BaseStatsViewSet):
     queryset = InfectionStats.objects.all()
 
+    def get_queryset(self):
+        qs, pref_qs = super().get_queryset()
+        return pref_qs.prefetch_related(Prefetch("infectionstats_set", queryset=qs.order_by('reported_date')))
+
     def list(self, request):
         queryset = self.get_queryset()
         data = []
         for q in queryset:
-            total = q.basestats_set.all().aggregate(
+            total = q.infectionstats_set.all().aggregate(
                 total_infected=Sum('infected'),
                 total_recovered=Sum('recovered'),
                 total_death=Sum('death'),
             )
             dic = {
                 'name': q.name,
-                'daily': q.basestats_set.all()
+                'daily': q.infectionstats_set.all()
             }
             dic.update(total)
             data.append(dic)
@@ -54,16 +59,20 @@ class InfectionStatsViewSet(BaseStatsViewSet):
 class BehaviorStatsViewSet(BaseStatsViewSet):
     queryset = BehaviorStats.objects.all()
 
+    def get_queryset(self):
+        qs, pref_qs = super().get_queryset()
+        return pref_qs.prefetch_related(Prefetch("behaviorstats_set", queryset=qs.order_by('reported_date')))
+
     def list(self, request):
         queryset = self.get_queryset()
         data = []
         for q in queryset:
-            avg = q.basestats_set.all().aggregate(
+            avg = q.behaviorstats_set.all().aggregate(
                 average_restraint_ratio=Avg('restraint_ratio'),
             )
             dic = {
                 'name': q.name,
-                'daily': q.basestats_set.all()
+                'daily': q.behaviorstats_set.all()
             }
             dic.update(avg)
             data.append(dic)
