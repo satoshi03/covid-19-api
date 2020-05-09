@@ -35,7 +35,7 @@ class InfectionStatsViewSet(BaseStatsViewSet):
 
     def get_queryset(self):
         qs, pref_qs = super().get_queryset()
-        return pref_qs.prefetch_related(Prefetch("infectionstats_set", queryset=qs.order_by('reported_date')))
+        return pref_qs.prefetch_related(Prefetch("infectionstats_set", queryset=qs.order_by('-reported_date')))
 
     def list(self, request):
         queryset = self.get_queryset()
@@ -61,7 +61,7 @@ class BehaviorStatsViewSet(BaseStatsViewSet):
 
     def get_queryset(self):
         qs, pref_qs = super().get_queryset()
-        return pref_qs.prefetch_related(Prefetch("behaviorstats_set", queryset=qs.order_by('reported_date')))
+        return pref_qs.prefetch_related(Prefetch("behaviorstats_set", queryset=qs.order_by('-reported_date')))
 
     def list(self, request):
         queryset = self.get_queryset()
