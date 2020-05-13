@@ -3,7 +3,7 @@ from rest_framework import viewsets
 from rest_framework.response import Response
 from django.db.models import Avg, Sum, Prefetch
 
-from .serializers import InfectionStatsSerializer, BehaviorStatsSerializer
+from .serializers import InfectionStatsSerializer, JapanInfectionStatsSerializer, BehaviorStatsSerializer
 from .models import InfectionStats, BehaviorStats, Prefecture
 
 
@@ -19,22 +19,19 @@ class BaseStatsViewSet(viewsets.ViewSet):
         if end_date:
             qs = qs.filter(reported_date__lt=end_date)
 
-        # filtering prefecture if it is included in request param
-        pref_qs = Prefecture.objects.all()
-        prefecture = self.request.query_params.get('prefecture')
-        if prefecture:
-            pref_qs = pref_qs.filter(name=prefecture)
-
-        return (qs, pref_qs)
-
-        # fetch stats
+        return qs
 
 
 class InfectionStatsViewSet(BaseStatsViewSet):
     queryset = InfectionStats.objects.all()
 
     def get_queryset(self):
-        qs, pref_qs = super().get_queryset()
+        qs = super().get_queryset()
+        # filtering prefecture if it is included in request param
+        pref_qs = Prefecture.objects.all()
+        prefecture = self.request.query_params.get('prefecture')
+        if prefecture:
+            pref_qs = pref_qs.filter(name=prefecture)
         return pref_qs.prefetch_related(Prefetch("infectionstats_set", queryset=qs.order_by('-reported_date')))
 
     def list(self, request):
@@ -42,7 +39,6 @@ class InfectionStatsViewSet(BaseStatsViewSet):
         data = []
         for q in queryset:
             total = q.infectionstats_set.all().aggregate(
-                total_infected=Sum('infected'),
                 total_recovered=Sum('recovered'),
                 total_death=Sum('death'),
             )
@@ -56,11 +52,35 @@ class InfectionStatsViewSet(BaseStatsViewSet):
         return Response(serializer.data)
 
 
+class JapanInfectionStatsViewSet(BaseStatsViewSet):
+    queryset = InfectionStats.objects.all()
+
+    def get_queryset(self):
+        qs = super().get_queryset()
+        return qs.values('reported_date').annotate(
+            new_infected=Sum('new_infected'),
+            current_infected=Sum('current_infected'),
+            total_infected=Sum('total_infected'),
+            total_recovered=Sum('recovered'),
+            total_death=Sum('death'),
+        ).order_by('-reported_date')
+
+    def list(self, request):
+        queryset = self.get_queryset()
+        serializer = JapanInfectionStatsSerializer(queryset, many=True)
+        return Response(serializer.data)
+
+
 class BehaviorStatsViewSet(BaseStatsViewSet):
     queryset = BehaviorStats.objects.all()
 
     def get_queryset(self):
-        qs, pref_qs = super().get_queryset()
+        qs = super().get_queryset()
+        # filtering prefecture if it is included in request param
+        pref_qs = Prefecture.objects.all()
+        prefecture = self.request.query_params.get('prefecture')
+        if prefecture:
+            pref_qs = pref_qs.filter(name=prefecture)
         return pref_qs.prefetch_related(Prefetch("behaviorstats_set", queryset=qs.order_by('-reported_date')))
 
     def list(self, request):

@@ -21,7 +21,9 @@ class InfectionStats(models.Model):
         unique_together = (('prefecture', 'reported_date'))
 
     prefecture = models.ForeignKey(Prefecture, on_delete=models.PROTECT)
-    infected = models.PositiveIntegerField(_('感染者数'), default=0)
+    new_infected = models.PositiveIntegerField(_('新規感染者数'), default=0)
+    current_infected = models.PositiveIntegerField(_('現在感染者数'), default=0)
+    total_infected = models.PositiveIntegerField(_('累計感染者数'), default=0)
     recovered = models.PositiveIntegerField(_('回復者数'), default=0)
     death = models.PositiveIntegerField(_('死者数'), default=0)
     reported_date = models.DateField(_('報告日付'), db_index=True)
