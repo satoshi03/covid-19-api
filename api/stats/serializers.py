@@ -24,7 +24,7 @@ class InfectionStatsSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Prefecture
-        fields = ['name', 'total_recovered', 'total_death', 'daily']
+        fields = ['name', 'name_en', 'total_recovered', 'total_death', 'daily']
 
 
 class JapanInfectionStatsSerializer(serializers.Serializer):

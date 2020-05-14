@@ -44,6 +44,7 @@ class InfectionStatsViewSet(BaseStatsViewSet):
             )
             dic = {
                 'name': q.name,
+                'name_en': q.name_en,
                 'daily': q.infectionstats_set.all()
             }
             dic.update(total)
@@ -92,6 +93,7 @@ class BehaviorStatsViewSet(BaseStatsViewSet):
             )
             dic = {
                 'name': q.name,
+                'name_en': q.name_en,
                 'daily': q.behaviorstats_set.all()
             }
             dic.update(avg)
