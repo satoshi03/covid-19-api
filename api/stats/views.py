@@ -39,8 +39,8 @@ class InfectionStatsViewSet(BaseStatsViewSet):
         data = []
         for q in queryset:
             total = q.infectionstats_set.all().aggregate(
-                total_recovered=Sum('recovered'),
-                total_death=Sum('death'),
+                total_recovered=Sum('total_recovered'),
+                total_death=Sum('total_death'),
             )
             dic = {
                 'name': q.name,
@@ -62,8 +62,8 @@ class JapanInfectionStatsViewSet(BaseStatsViewSet):
             new_infected=Sum('new_infected'),
             current_infected=Sum('current_infected'),
             total_infected=Sum('total_infected'),
-            total_recovered=Sum('recovered'),
-            total_death=Sum('death'),
+            total_recovered=Sum('total_recovered'),
+            total_death=Sum('total_death'),
         ).order_by('-reported_date')
 
     def list(self, request):

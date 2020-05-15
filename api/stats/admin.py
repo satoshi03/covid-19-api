@@ -15,8 +15,9 @@ class InfectionStatsAdmin(admin.ModelAdmin):
         'new_infected',
         'current_infected',
         'total_infected',
-        'recovered',
-        'death',
+        'total_recovered',
+        'total_death',
+        'restraint_ratio',
         'reported_date')
 
 

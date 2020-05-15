@@ -11,9 +11,12 @@ class InfectionDailyStatsSerializer(serializers.ModelSerializer):
             'new_infected',
             'current_infected',
             'total_infected',
-            'recovered',
-            'death',
-            'reported_date'
+            'total_recovered',
+            'total_death',
+            'restraint_ratio',
+            'reported_date',
+            'created_at',
+            'updated_at',
         ]
 
 

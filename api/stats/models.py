@@ -24,9 +24,14 @@ class InfectionStats(models.Model):
     new_infected = models.PositiveIntegerField(_('新規感染者数'), default=0)
     current_infected = models.PositiveIntegerField(_('現在感染者数'), default=0)
     total_infected = models.PositiveIntegerField(_('累計感染者数'), default=0)
-    recovered = models.PositiveIntegerField(_('回復者数'), default=0)
-    death = models.PositiveIntegerField(_('死者数'), default=0)
+    total_recovered = models.PositiveIntegerField(_('回復者数'), default=0)
+    total_death = models.PositiveIntegerField(_('死者数'), default=0)
+    restraint_ratio = models.FloatField(_('自粛率'),
+                                        null=True,
+                                        validators=[MinValueValidator(0.0), MaxValueValidator(1.0)])
     reported_date = models.DateField(_('報告日付'), db_index=True)
+    created_at = models.DateTimeField(_('作成日時'), auto_now_add=True)
+    updated_at = models.DateTimeField(_('更新日時'), auto_now=True)
 
     @classmethod
     def aggregate_by_date(cls, date):
