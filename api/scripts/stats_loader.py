@@ -21,7 +21,15 @@ def run():
            for daily_data in data['days']:
                date = datetime.strptime(daily_data['date'], '%Y/%m/%d')
                obj = InfectionStats.objects.filter(reported_date=date, prefecture__id=id)
-               if not obj:
+               if obj:
+                   print("Update stats:{} of {}".format(daily_data['date'], pref.name))
+                   obj[0].current_infected = daily_data['current']
+                   obj[0].new_infected = daily_data['new']
+                   obj[0].total_infected = daily_data['total']
+                   obj[0].total_recovered = daily_data['recovery']
+                   obj[0].total_death = daily_data['death']
+                   obj[0].save()
+               else:
                    print("Save stats:{} of {}".format(daily_data['date'], pref.name))
                    stats = InfectionStats(
                        prefecture=pref,
