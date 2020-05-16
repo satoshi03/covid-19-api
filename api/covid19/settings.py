@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'stats.apps.StatsConfig',
     'rest_framework',
     'corsheaders',
+    'django_extensions',
 ]
 
 MIDDLEWARE = [
