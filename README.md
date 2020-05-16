@@ -19,3 +19,13 @@ $ pipenv run python manage.py runserver
 ```
 
 Then, server will be started on 8000 port.
+
+## Load statitics
+
+This API loads data from Yahoo stats.
+
+Run script.
+
+```
+$ pipenv run  python manage.py runscript stats_loader
+```
