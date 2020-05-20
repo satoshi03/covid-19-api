@@ -3,12 +3,16 @@ import os
 from covid19.settings import BASE_DIR
 from covid19.settings import *
 
-ALLOWED_HOSTS = ["*"]
+ALLOWED_HOSTS = [os.environ.get('BACKEND_HOST')]
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
 CORS_ORIGIN_WHITELIST = (
     os.environ.get('FRONETEND_HOST', default=""),
 )
+
+SECRET_KEY = os.environ.get('SECRET_KEY')
+
+DEBUG = False
 
 DATABASES = {
     'default': {
