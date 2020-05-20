@@ -11,6 +11,7 @@ django = ">=3.0.3"
 djangorestframework = "*"
 django-cors-headers = "*"
 django-extensions = "*"
+uwsgi = "*"
 
 [requires]
 python_version = "3.7"

@@ -1,0 +1,21 @@
+import os
+
+from covid19.settings import BASE_DIR
+from covid19.settings import *
+
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': '',
+        'USER': '',
+        'PASSWORD': '',
+        'HOST': '127.0.0.1',
+        'PORT': 3306,
+    }
+}
+
+CORS_ORIGIN_WHITELIST = (
+     'http://localhost:8001',
+     'http://127.0.0.1:8001',
+)
