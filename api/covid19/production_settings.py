@@ -14,9 +14,9 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'covid19',
-        'USER': os.environ.get('RDB_USERNAME', default=""),
-        'PASSWORD': os.environ.get('RDB_PASSWORD', default=""),
-        'HOST': os.environ.get('RDB_HOST', default=""),
+        'USER': os.environ.get('DB_USERNAME', default=""),
+        'PASSWORD': os.environ.get('DB_PASSWORD', default=""),
+        'HOST': os.environ.get('DB_HOST', default=""),
         'PORT': 3306,
         'OPTIONS': {
             'charset': 'utf8mb4',

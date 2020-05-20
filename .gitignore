@@ -15,6 +15,7 @@ reference
 .env.local
 .env.*.local
 .env*
+!.env.tmpl
 
 # Log files
 npm-debug.log*
