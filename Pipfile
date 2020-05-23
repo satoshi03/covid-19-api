@@ -12,6 +12,7 @@ djangorestframework = "*"
 django-cors-headers = "*"
 django-extensions = "*"
 uwsgi = "*"
+django-dotenv = "*"
 
 [requires]
 python_version = "3.7"
