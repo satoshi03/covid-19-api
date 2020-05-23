@@ -22,10 +22,10 @@ class InfectionStats(models.Model):
 
     prefecture = models.ForeignKey(Prefecture, on_delete=models.PROTECT)
     new_infected = models.IntegerField(_('新規感染者数'), default=0)
-    current_infected = models.PositiveIntegerField(_('現在感染者数'), default=0)
-    total_infected = models.PositiveIntegerField(_('累計感染者数'), default=0)
-    total_recovered = models.PositiveIntegerField(_('回復者数'), default=0)
-    total_death = models.PositiveIntegerField(_('死者数'), default=0)
+    current_infected = models.IntegerField(_('現在感染者数'), default=0)
+    total_infected = models.IntegerField(_('累計感染者数'), default=0)
+    total_recovered = models.IntegerField(_('回復者数'), default=0)
+    total_death = models.IntegerField(_('死者数'), default=0)
     restraint_ratio = models.FloatField(_('自粛率'),
                                         null=True,
                                         validators=[MinValueValidator(0.0), MaxValueValidator(1.0)])
