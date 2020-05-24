@@ -7,7 +7,7 @@ ALLOWED_HOSTS = [os.environ.get('BACKEND_HOST')]
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
 CORS_ORIGIN_WHITELIST = (
-    os.environ.get('FRONETEND_HOST', default=""),
+    os.environ.get('FRONTEND_HOST', default=""),
 )
 
 SECRET_KEY = os.environ.get('SECRET_KEY')

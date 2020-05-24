@@ -15,7 +15,7 @@ from django.core.wsgi import get_wsgi_application
 # if .env file exists on api dir, read it
 dotenv_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), '.env')
 if os.path.exists(dotenv_path):
-    dotenv.read_dotenv()
+    dotenv.read_dotenv(dotenv=dotenv_path)
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'covid19.settings')
 
