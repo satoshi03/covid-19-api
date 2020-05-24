@@ -9,16 +9,39 @@ If pipenv is not installed on your environment, install pipenv at first.
 
 ```
 $ pipenv install --dev
+$ pipenv shell
 ```
 
 Run server.
 
 ```
 $ cd api
-$ pipenv run python manage.py runserver
+$ python manage.py runserver
 ```
 
 Then, server will be started on 8000 port.
+
+## Initial setup
+
+Set up environment args.
+
+```
+$ cd api
+$ cp .env.tmpl .env
+$ vim .env
+```
+
+Setup database.
+
+```
+$ python manage.py migrate
+```
+
+Load initial prefectures info.
+
+```
+$ python manage.py loaddata stats/fixtures/prefectures.json
+```
 
 ## Load statitics
 
