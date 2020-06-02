@@ -1,20 +1,38 @@
 from datetime import datetime
 import json
 import urllib.request
+import logging
 
 from django.db.models import Sum
 
 from stats.models import Prefecture, InfectionStats
 
 
+logger = logging.getLogger(__name__)
+
 PREF_STATS_BASE_URL='https://hazard.east.edge.storage-yahoo.jp/covid19/prefectures_graph_{prefecture_id}.json?timestamp={timestamp}t'
 MAX_PREF_ID=47
+
+def is_updated():
+    t = datetime.now()
+    pref = Prefecture.objects.get(id=1)
+    url = PREF_STATS_BASE_URL.format(prefecture_id=1, timestamp=t.strftime('%Y%m%d%H%M'))
+    with urllib.request.urlopen(url) as response:
+       resp = response.read()
+       data = json.loads(resp.decode('utf8'))
+       if 'days' in data and len(data['days']) > 0:
+           latest = data['days'][-1]
+           date = datetime.strptime(latest['date'], '%Y/%m/%d')
+           obj = InfectionStats.objects.filter(reported_date=date, prefecture__id=1)
+           return len(obj) > 0
+    return True
+
 
 def update_prefectures_stats():
     t = datetime.now()
     for id in range(1, MAX_PREF_ID+1):
         pref = Prefecture.objects.get(id=id)
-        print("Fetch stats:{}".format(pref.name))
+        logger.info("Fetch stats:{}".format(pref.name))
         url = PREF_STATS_BASE_URL.format(prefecture_id=id, timestamp=t.strftime('%Y%m%d%H%M'))
         with urllib.request.urlopen(url) as response:
            resp = response.read()
@@ -23,7 +41,7 @@ def update_prefectures_stats():
                date = datetime.strptime(daily_data['date'], '%Y/%m/%d')
                obj = InfectionStats.objects.filter(reported_date=date, prefecture__id=id)
                if obj:
-                   print("Update stats:{} of {}".format(daily_data['date'], pref.name))
+                   logger.info("Update stats:{} of {}".format(daily_data['date'], pref.name))
                    obj[0].current_infected = daily_data['current']
                    obj[0].new_infected = daily_data['new']
                    obj[0].total_infected = daily_data['total']
@@ -31,7 +49,7 @@ def update_prefectures_stats():
                    obj[0].total_death = daily_data['death']
                    obj[0].save()
                else:
-                   print("Save stats:{} of {}".format(daily_data['date'], pref.name))
+                   logger.info("Save stats:{} of {}".format(daily_data['date'], pref.name))
                    stats = InfectionStats(
                        prefecture=pref,
                        reported_date=date,
@@ -79,10 +97,9 @@ def update_others_stats():
             recovered = daily_data['recovery'] - obj['total_recovered__sum']
             death  = daily_data['death'] - obj['total_death__sum']
 
-            print(current, new, total, recovered, death)
             obj = InfectionStats.objects.filter(reported_date=date, prefecture__id=PREF_ID_OTHER)
             if obj:
-                print("Update stats:{} of {}".format(daily_data['date'], pref.name))
+                logger.info("Update stats:{} of {}".format(daily_data['date'], pref.name))
                 obj[0].current_infected = current
                 obj[0].new_infected = new
                 obj[0].total_infected = total
@@ -90,7 +107,7 @@ def update_others_stats():
                 obj[0].total_death = death
                 obj[0].save()
             else:
-                print("Save stats:{} of {}".format(daily_data['date'], pref.name))
+                logger.info("Save stats:{} of {}".format(daily_data['date'], pref.name))
                 stats = InfectionStats(
                     prefecture=pref,
                     reported_date=date,
@@ -105,5 +122,10 @@ def update_others_stats():
 
 
 def run():
-    update_prefectures_stats()
-    update_others_stats()
+    logger.info("start to run stats_loader")
+    if not is_updated():
+        update_prefectures_stats()
+        update_others_stats()
+    else:
+        logger.info("stats has already updated.")
+    logger.info("finish to run stats_loader")
