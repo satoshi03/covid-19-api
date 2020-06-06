@@ -13,7 +13,7 @@ logger = logging.getLogger(__name__)
 PREF_STATS_BASE_URL='https://hazard.east.edge.storage-yahoo.jp/covid19/prefectures_graph_{prefecture_id}.json?timestamp={timestamp}t'
 MAX_PREF_ID=47
 
-def is_updated():
+def is_prefecture_updated():
     t = datetime.now()
     pref = Prefecture.objects.get(id=1)
     url = PREF_STATS_BASE_URL.format(prefecture_id=1, timestamp=t.strftime('%Y%m%d%H%M'))
@@ -65,6 +65,21 @@ def update_prefectures_stats():
 
 JAPAN_STATS_BASE_URL = "https://hazard.east.edge.storage-yahoo.jp/covid19/japan_graph.json?timestamp={timestamp}t"
 PREF_ID_OTHER = 48
+
+
+def is_others_updated():
+    t = datetime.now()
+    pref = Prefecture.objects.get(id=PREF_ID_OTHER)
+    url = JAPAN_STATS_BASE_URL.format(timestamp=t.strftime('%Y%m%d%H%M'))
+    with urllib.request.urlopen(url) as response:
+       resp = response.read()
+       data = json.loads(resp.decode('utf8'))
+       if 'days' in data and len(data['days']) > 0:
+           latest = data['days'][-1]
+           date = datetime.strptime(latest['date'], '%Y/%m/%d')
+           obj = InfectionStats.objects.filter(reported_date=date, prefecture__id=PREF_ID_OTHER)
+           return len(obj) > 0
+    return True
 
 
 def update_others_stats():
@@ -123,9 +138,14 @@ def update_others_stats():
 
 def run():
     logger.info("start to run stats_loader")
-    if not is_updated():
+    if not is_prefecture_updated():
         update_prefectures_stats()
+    else:
+        logger.info("prefecture stats has already updated.")
+
+    if not is_others_updated():
         update_others_stats()
     else:
-        logger.info("stats has already updated.")
+        logger.info("other stats has already updated.")
+
     logger.info("finish to run stats_loader")
