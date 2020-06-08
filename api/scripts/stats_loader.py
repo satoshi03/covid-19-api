@@ -94,6 +94,9 @@ def update_others_stats():
         data = json.loads(resp.decode('utf8'))
         pref = Prefecture.objects.get(id=PREF_ID_OTHER)
         for daily_data in data['days']:
+            if not daily_data['date']:
+                logger.warn('Invalid daily date:{}'.format(daily_data))
+                continue
             date = datetime.strptime(daily_data['date'], '%Y/%m/%d')
             obj = InfectionStats.objects.filter(reported_date=date).exclude(prefecture__id=PREF_ID_OTHER).aggregate(
                 Sum('current_infected'),
