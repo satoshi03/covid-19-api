@@ -76,6 +76,10 @@ def is_others_updated():
        data = json.loads(resp.decode('utf8'))
        if 'days' in data and len(data['days']) > 0:
            latest = data['days'][-1]
+           for i in range(len(data['days']) - 1, -1, -1):
+               if data['days'][i]['date']:
+                   latest = data['days'][i]
+                   break
            date = datetime.strptime(latest['date'], '%Y/%m/%d')
            obj = InfectionStats.objects.filter(reported_date=date, prefecture__id=PREF_ID_OTHER)
            return len(obj) > 0
