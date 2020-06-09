@@ -2,6 +2,7 @@ from django.shortcuts import render
 from rest_framework import viewsets
 from rest_framework.response import Response
 from django.db.models import Avg, Sum, Count, Prefetch
+from django.utils import timezone
 
 from .serializers import InfectionStatsSerializer, JapanInfectionStatsSerializer, BehaviorStatsSerializer
 from .models import InfectionStats, BehaviorStats, Prefecture
@@ -24,6 +25,7 @@ class BaseStatsViewSet(viewsets.ViewSet):
 
 class InfectionStatsViewSet(BaseStatsViewSet):
     queryset = InfectionStats.objects.all()
+    daily_stats_num = 70  # get stats for 70 days
 
     def get_queryset(self):
         qs = super().get_queryset()
@@ -45,7 +47,8 @@ class InfectionStatsViewSet(BaseStatsViewSet):
             dic = {
                 'name': q.name,
                 'name_en': q.name_en,
-                'daily': q.infectionstats_set.all()
+                'daily': q.infectionstats_set.filter(
+                    reported_date__gte=timezone.datetime.now() - timezone.timedelta(days=self.daily_stats_num))
             }
             dic.update(total)
             data.append(dic)
