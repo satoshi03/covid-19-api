@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from rest_framework import viewsets
 from rest_framework.response import Response
-from django.db.models import Avg, Sum, Count, Prefetch
+from django.db.models import Avg, Sum, Count, Max, Prefetch
 from django.utils import timezone
 
 from .serializers import InfectionStatsSerializer, JapanInfectionStatsSerializer, BehaviorStatsSerializer
@@ -68,6 +68,8 @@ class JapanInfectionStatsViewSet(BaseStatsViewSet):
             total_recovered=Sum('total_recovered'),
             total_death=Sum('total_death'),
             prefecture_count=Count('prefecture'),
+            created_at=Max('created_at'),
+            updated_at=Max('updated_at'),
         ).filter(prefecture_count__gt=47).order_by('-reported_date')
 
     def list(self, request):

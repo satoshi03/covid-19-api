@@ -37,6 +37,8 @@ class JapanInfectionStatsSerializer(serializers.Serializer):
     total_recovered = serializers.IntegerField()
     total_death = serializers.IntegerField()
     reported_date = serializers.DateField()
+    created_at = serializers.DateTimeField()
+    updated_at = serializers.DateTimeField()
 
     class Meta:
         fields = [
@@ -46,6 +48,8 @@ class JapanInfectionStatsSerializer(serializers.Serializer):
             'total_recovered',
             'total_death',
             'reported_date',
+            'created_at',
+            'updated_at',
         ]
 
 
