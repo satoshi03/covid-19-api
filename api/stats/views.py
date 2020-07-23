@@ -70,7 +70,7 @@ class JapanInfectionStatsViewSet(BaseStatsViewSet):
             prefecture_count=Count('prefecture'),
             created_at=Max('created_at'),
             updated_at=Max('updated_at'),
-        ).filter(prefecture_count__gt=47).order_by('-reported_date')
+        ).filter(prefecture_count__gt=46).order_by('-reported_date')  # except for Iwate
 
     def list(self, request):
         queryset = self.get_queryset()
