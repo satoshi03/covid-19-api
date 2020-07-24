@@ -12,6 +12,7 @@ logger = logging.getLogger(__name__)
 
 PREF_STATS_BASE_URL='https://hazard.east.edge.storage-yahoo.jp/covid19/prefectures_graph_{prefecture_id}.json?timestamp={timestamp}t'
 MAX_PREF_ID=47
+PREFECTURE_NUM=46 # except for Iwate
 
 def is_prefecture_updated():
     t = datetime.now()
@@ -98,6 +99,11 @@ def update_others_stats():
                 logger.warn('Invalid daily date:{}'.format(daily_data))
                 continue
             date = datetime.strptime(daily_data['date'], '%Y/%m/%d')
+            stats_num = InfectionStats.objects.filter(reported_date=date).exclude(prefecture__id=PREF_ID_OTHER).count()
+            if stats_num < PREFECTURE_NUM:
+                logger.info('Skip due to insufficient stats {} prefectures for {}'.format(stats_num, daily_data['date']))
+                continue
+
             obj = InfectionStats.objects.filter(reported_date=date).exclude(prefecture__id=PREF_ID_OTHER).aggregate(
                 Sum('current_infected'),
                 Sum('total_infected'),
